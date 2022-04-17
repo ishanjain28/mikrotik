@@ -540,7 +540,6 @@ dependencies = [
  "serde_derive",
  "tokio",
  "tokio-test",
- "tracing",
  "tracing-subscriber",
 ]
 
