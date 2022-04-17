@@ -1,8 +1,17 @@
 use crate::{system::types::Health, Client};
-use color_eyre::Report;
 use reqwest::{Method, Request};
+use thiserror::Error;
 
-pub async fn health(client: &mut Client) -> Result<Vec<Health>, Report> {
+#[derive(Error, Debug)]
+pub enum HealthError {
+    #[error(transparent)]
+    UrlError(#[from] url::ParseError),
+
+    #[error(transparent)]
+    ReqwestError(#[from] reqwest::Error),
+}
+
+pub async fn health(client: &mut Client) -> Result<Vec<Health>, HealthError> {
     let url = client.base_url.clone();
     let url = url.join(&format!("{}/health", super::BASE))?;
 

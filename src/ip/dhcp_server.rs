@@ -2,10 +2,10 @@ use crate::{
     ip::types::{DhcpServer, Lease, Network},
     Client,
 };
-use color_eyre::Report;
 use reqwest::{Method, Request};
+use thiserror::Error;
 
-pub async fn list(client: &mut Client) -> Result<Vec<DhcpServer>, Report> {
+pub async fn list(client: &mut Client) -> Result<Vec<DhcpServer>, DhcpServerError> {
     let url = client.base_url.clone();
     let url = url.join(&format!("{}/dhcp-server", super::BASE))?;
     let req = Request::new(Method::GET, url);
@@ -14,7 +14,7 @@ pub async fn list(client: &mut Client) -> Result<Vec<DhcpServer>, Report> {
     Ok(response)
 }
 
-pub async fn get(client: &mut Client, dhcp_server_id: &str) -> Result<DhcpServer, Report> {
+pub async fn get(client: &mut Client, dhcp_server_id: &str) -> Result<DhcpServer, DhcpServerError> {
     let url = client.base_url.clone();
     let url = url.join(&format!("{}/dhcp-server/{}", super::BASE, dhcp_server_id))?;
     let req = Request::new(Method::GET, url);
@@ -23,7 +23,7 @@ pub async fn get(client: &mut Client, dhcp_server_id: &str) -> Result<DhcpServer
     Ok(response)
 }
 
-pub async fn list_network(client: &mut Client) -> Result<Vec<Network>, Report> {
+pub async fn list_network(client: &mut Client) -> Result<Vec<Network>, DhcpServerError> {
     let url = client.base_url.clone();
     let url = url.join(&format!("{}/dhcp-server/network", super::BASE))?;
     let req = Request::new(Method::GET, url);
@@ -32,7 +32,7 @@ pub async fn list_network(client: &mut Client) -> Result<Vec<Network>, Report> {
     Ok(response)
 }
 
-pub async fn get_network(client: &mut Client, nid: &str) -> Result<Network, Report> {
+pub async fn get_network(client: &mut Client, nid: &str) -> Result<Network, DhcpServerError> {
     let url = client.base_url.clone();
     let url = url.join(&format!("{}/dhcp-server/network/{}", super::BASE, nid))?;
     let req = Request::new(Method::GET, url);
@@ -41,7 +41,7 @@ pub async fn get_network(client: &mut Client, nid: &str) -> Result<Network, Repo
     Ok(response)
 }
 
-pub async fn list_leases(client: &mut Client) -> Result<Vec<Lease>, Report> {
+pub async fn list_leases(client: &mut Client) -> Result<Vec<Lease>, DhcpServerError> {
     let url = client.base_url.clone();
     let url = url.join(&format!("{}/dhcp-server/lease", super::BASE))?;
     let req = Request::new(Method::GET, url);
@@ -50,11 +50,20 @@ pub async fn list_leases(client: &mut Client) -> Result<Vec<Lease>, Report> {
     Ok(response)
 }
 
-pub async fn get_lease(client: &mut Client, lease_id: &str) -> Result<Lease, Report> {
+pub async fn get_lease(client: &mut Client, lease_id: &str) -> Result<Lease, DhcpServerError> {
     let url = client.base_url.clone();
     let url = url.join(&format!("{}/dhcp-server/lease/{}", super::BASE, lease_id))?;
     let req = Request::new(Method::GET, url);
     let response = client.execute(req).await?.json::<Lease>().await?;
 
     Ok(response)
+}
+
+#[derive(Debug, Error)]
+pub enum DhcpServerError {
+    #[error(transparent)]
+    UrlError(#[from] url::ParseError),
+
+    #[error(transparent)]
+    ReqwestError(#[from] reqwest::Error),
 }

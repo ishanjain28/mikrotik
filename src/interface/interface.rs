@@ -1,8 +1,17 @@
 use crate::{interface::types::Interface, Client};
-use color_eyre::Report;
 use reqwest::{Method, Request};
+use thiserror::Error;
 
-pub async fn list(client: &mut Client) -> Result<Vec<Interface>, Report> {
+#[derive(Error, Debug)]
+pub enum InterfaceError {
+    #[error(transparent)]
+    UrlError(#[from] url::ParseError),
+
+    #[error(transparent)]
+    ReqwestError(#[from] reqwest::Error),
+}
+
+pub async fn list(client: &mut Client) -> Result<Vec<Interface>, InterfaceError> {
     let url = client.base_url.clone();
     let url = url.join(super::BASE)?;
 
@@ -13,7 +22,7 @@ pub async fn list(client: &mut Client) -> Result<Vec<Interface>, Report> {
     Ok(response)
 }
 
-pub async fn get(client: &mut Client, ifid: &str) -> Result<Interface, Report> {
+pub async fn get(client: &mut Client, ifid: &str) -> Result<Interface, InterfaceError> {
     let url = client.base_url.clone();
     let url = url.join(&format!("{}/{}", super::BASE, ifid))?;
 

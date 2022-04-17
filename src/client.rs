@@ -1,8 +1,8 @@
-use color_eyre::Report;
 use reqwest::{
     header::{HeaderMap, HeaderValue},
     Request, Url,
 };
+use thiserror::Error;
 
 pub struct Client {
     pub client: reqwest::Client,
@@ -17,7 +17,7 @@ impl Client {
         username: String,
         password: String,
         self_signed_cert: bool,
-    ) -> Result<Self, Report> {
+    ) -> Result<Self, ClientError> {
         let value = format!("{}:{}", username, password);
         let value = base64::encode(value);
 
@@ -48,4 +48,16 @@ impl Client {
 
         self.client.execute(r).await
     }
+}
+
+#[derive(Debug, Error)]
+pub enum ClientError {
+    #[error(transparent)]
+    InvalidHeaderValue(#[from] reqwest::header::InvalidHeaderValue),
+
+    #[error(transparent)]
+    UrlError(#[from] url::ParseError),
+
+    #[error(transparent)]
+    ReqwestError(#[from] reqwest::Error),
 }
