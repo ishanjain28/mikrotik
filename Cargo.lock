@@ -530,7 +530,7 @@ checksum = "308cc39be01b73d0d18f82a0e7b2a3df85245f84af96fdddc5d202d27e47b86a"
 
 [[package]]
 name = "mikrotik"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "base64",
  "color-eyre",
@@ -538,7 +538,6 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_derive",
- "serde_json",
  "tokio",
  "tokio-test",
  "tracing",
