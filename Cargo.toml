@@ -2,6 +2,9 @@
 name = "mikrotik"
 version = "0.0.1"
 edition = "2021"
+description = "REST API Wrapper for Mikrotik API"
+license = "MIT"
+license-file = "LICENSE"
 
 [dependencies]
 base64 = "0.13.0"
