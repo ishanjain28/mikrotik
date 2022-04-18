@@ -8,8 +8,7 @@ use thiserror::Error;
 pub struct Client {
     pub client: reqwest::Client,
     base_url: Url,
-    pub basic_auth: HeaderValue,
-    pub self_signed_cert: bool,
+    basic_auth: HeaderValue,
 }
 
 impl Client {
@@ -33,7 +32,6 @@ impl Client {
             client,
             base_url,
             basic_auth,
-            self_signed_cert,
         })
     }
 
