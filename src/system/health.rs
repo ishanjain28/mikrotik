@@ -1,23 +1,7 @@
-use crate::{system::types::Health, Client};
-use reqwest::{Method, Request};
-use thiserror::Error;
+use crate::{system::types::Health, Client, ClientError};
 
-#[derive(Error, Debug)]
-pub enum HealthError {
-    #[error(transparent)]
-    UrlError(#[from] url::ParseError),
+pub async fn health(client: &mut Client) -> Result<Vec<Health>, ClientError> {
+    let url = format!("{}/health", super::BASE);
 
-    #[error(transparent)]
-    ReqwestError(#[from] reqwest::Error),
-}
-
-pub async fn health(client: &mut Client) -> Result<Vec<Health>, HealthError> {
-    let url = client.base_url.clone();
-    let url = url.join(&format!("{}/health", super::BASE))?;
-
-    let req = Request::new(Method::GET, url);
-
-    let response = client.execute(req).await?.json::<Vec<Health>>().await?;
-
-    Ok(response)
+    client.execute_get::<Vec<Health>>(&url).await
 }

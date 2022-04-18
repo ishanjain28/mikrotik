@@ -1,8 +1,8 @@
-use mikrotik::{ip::dhcp_server::DhcpServerError, Client};
+use mikrotik::{Client, ClientError};
 use reqwest::Url;
 
 #[tokio::test]
-async fn list_dhcp_servers() -> Result<(), DhcpServerError> {
+async fn list_dhcp_servers() -> Result<(), ClientError> {
     let base = Url::parse("https://10.0.10.1")?;
     let mut client = Client::new(base, "admin".to_string(), "ifd783far".to_string(), true)
         .expect("error in creating client");
@@ -15,7 +15,7 @@ async fn list_dhcp_servers() -> Result<(), DhcpServerError> {
 }
 
 #[tokio::test]
-async fn get_dhcp_server() -> Result<(), DhcpServerError> {
+async fn get_dhcp_server() -> Result<(), ClientError> {
     let base = Url::parse("https://10.0.10.1")?;
     let mut client = Client::new(base, "admin".to_string(), "ifd783far".to_string(), true)
         .expect("error in creating client");
@@ -28,7 +28,7 @@ async fn get_dhcp_server() -> Result<(), DhcpServerError> {
 }
 
 #[tokio::test]
-async fn list_network() -> Result<(), DhcpServerError> {
+async fn list_network() -> Result<(), ClientError> {
     let base = Url::parse("https://10.0.10.1")?;
     let mut client = Client::new(base, "admin".to_string(), "ifd783far".to_string(), true)
         .expect("error in creating client");
@@ -41,7 +41,7 @@ async fn list_network() -> Result<(), DhcpServerError> {
 }
 
 #[tokio::test]
-async fn get_network() -> Result<(), DhcpServerError> {
+async fn get_network() -> Result<(), ClientError> {
     let base = Url::parse("https://10.0.10.1")?;
     let mut client = Client::new(base, "admin".to_string(), "ifd783far".to_string(), true)
         .expect("error in creating client");
@@ -56,7 +56,7 @@ async fn get_network() -> Result<(), DhcpServerError> {
 }
 
 #[tokio::test]
-async fn list_leases() -> Result<(), DhcpServerError> {
+async fn list_leases() -> Result<(), ClientError> {
     let base = Url::parse("https://10.0.10.1")?;
     let mut client = Client::new(base, "admin".to_string(), "ifd783far".to_string(), true)
         .expect("error in creating client");
@@ -69,7 +69,7 @@ async fn list_leases() -> Result<(), DhcpServerError> {
 }
 
 #[tokio::test]
-async fn get_lease() -> Result<(), DhcpServerError> {
+async fn get_lease() -> Result<(), ClientError> {
     let base = Url::parse("https://10.0.10.1")?;
     let mut client = Client::new(base, "admin".to_string(), "ifd783far".to_string(), true)
         .expect("error in creating client");

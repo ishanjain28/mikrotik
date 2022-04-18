@@ -38,7 +38,7 @@ pub struct Lease {
     pub disabled: String,
     pub dynamic: String,
     #[serde(rename = "host-name")]
-    pub host_name: String,
+    pub host_name: Option<String>,
     #[serde(rename = "last-seen")]
     pub last_seen: String,
     #[serde(rename = "mac-address")]

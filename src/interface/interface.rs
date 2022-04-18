@@ -1,34 +1,13 @@
-use crate::{interface::types::Interface, Client};
-use reqwest::{Method, Request};
-use thiserror::Error;
+use crate::{interface::types::Interface, Client, ClientError};
 
-#[derive(Error, Debug)]
-pub enum InterfaceError {
-    #[error(transparent)]
-    UrlError(#[from] url::ParseError),
+pub async fn list(client: &mut Client) -> Result<Vec<Interface>, ClientError> {
+    let url = super::BASE;
 
-    #[error(transparent)]
-    ReqwestError(#[from] reqwest::Error),
+    client.execute_get::<Vec<Interface>>(&url).await
 }
 
-pub async fn list(client: &mut Client) -> Result<Vec<Interface>, InterfaceError> {
-    let url = client.base_url.clone();
-    let url = url.join(super::BASE)?;
+pub async fn get(client: &mut Client, ifid: &str) -> Result<Interface, ClientError> {
+    let url = format!("{}/{}", super::BASE, ifid);
 
-    let req = Request::new(Method::GET, url);
-
-    let response = client.execute(req).await?.json::<Vec<Interface>>().await?;
-
-    Ok(response)
-}
-
-pub async fn get(client: &mut Client, ifid: &str) -> Result<Interface, InterfaceError> {
-    let url = client.base_url.clone();
-    let url = url.join(&format!("{}/{}", super::BASE, ifid))?;
-
-    let req = Request::new(Method::GET, url);
-
-    let response = client.execute(req).await?.json::<Interface>().await?;
-
-    Ok(response)
+    client.execute_get::<Interface>(&url).await
 }

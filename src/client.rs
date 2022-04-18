@@ -1,12 +1,13 @@
 use reqwest::{
     header::{HeaderMap, HeaderValue},
-    Request, Url,
+    Method, Request, Url,
 };
+use serde::de::DeserializeOwned;
 use thiserror::Error;
 
 pub struct Client {
     pub client: reqwest::Client,
-    pub base_url: Url,
+    base_url: Url,
     pub basic_auth: HeaderValue,
     pub self_signed_cert: bool,
 }
@@ -21,7 +22,8 @@ impl Client {
         let value = format!("{}:{}", username, password);
         let value = base64::encode(value);
 
-        let basic_auth = HeaderValue::from_str(&format!("Basic {}", value))?;
+        let basic_auth = HeaderValue::from_str(&format!("Basic {}", value))
+            .expect("invalid value for Authorization header");
 
         let client = reqwest::Client::builder()
             .danger_accept_invalid_certs(self_signed_cert)
@@ -48,13 +50,20 @@ impl Client {
 
         self.client.execute(r).await
     }
+
+    pub async fn execute_get<T: DeserializeOwned>(&mut self, url: &str) -> Result<T, ClientError> {
+        let url = self.base_url.join(url)?;
+        let mut req = Request::new(Method::GET, url);
+        self.add_credentials(req.headers_mut());
+
+        let response = self.client.execute(req).await?.json::<T>().await?;
+
+        Ok(response)
+    }
 }
 
 #[derive(Debug, Error)]
 pub enum ClientError {
-    #[error(transparent)]
-    InvalidHeaderValue(#[from] reqwest::header::InvalidHeaderValue),
-
     #[error(transparent)]
     UrlError(#[from] url::ParseError),
 

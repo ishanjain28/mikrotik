@@ -1,8 +1,8 @@
-use mikrotik::{interface::InterfaceError, Client};
+use mikrotik::{Client, ClientError};
 use reqwest::Url;
 
 #[tokio::test]
-async fn list_interfaces() -> Result<(), InterfaceError> {
+async fn list_interfaces() -> Result<(), ClientError> {
     let base = Url::parse("https://10.0.10.1")?;
     let mut client = Client::new(base, "admin".to_string(), "ifd783far".to_string(), true)
         .expect("error in creating client");
@@ -15,7 +15,7 @@ async fn list_interfaces() -> Result<(), InterfaceError> {
 }
 
 #[tokio::test]
-async fn get_interface() -> Result<(), InterfaceError> {
+async fn get_interface() -> Result<(), ClientError> {
     let base = Url::parse("https://10.0.10.1")?;
     let mut client = Client::new(base, "admin".to_string(), "ifd783far".to_string(), true)
         .expect("error in creating client");
