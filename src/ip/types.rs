@@ -1,3 +1,4 @@
+use crate::serde_helpers::deserialize_bool;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
 
@@ -9,10 +10,13 @@ pub struct DhcpServer {
     #[serde(rename = "address-pool")]
     pub address_pool: String,
     pub authoritative: String,
-    pub disabled: String,
-    pub dynamic: String,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub disabled: bool,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub dynamic: bool,
     pub interface: String,
-    pub invalid: String,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub invalid: bool,
     #[serde(rename = "lease-script")]
     pub lease_script: String,
     #[serde(rename = "lease-time")]
@@ -30,12 +34,14 @@ pub struct Lease {
     pub address: String,
     #[serde(rename = "address-lists")]
     pub address_lists: String,
-    pub blocked: String,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub blocked: bool,
     #[serde(rename = "client-id")]
     pub client_id: Option<String>,
     #[serde(rename = "dhcp-option")]
     pub dhcp_option: String,
-    pub disabled: String,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub disabled: bool,
     pub dynamic: String,
     #[serde(rename = "host-name")]
     pub host_name: Option<String>,
@@ -43,7 +49,8 @@ pub struct Lease {
     pub last_seen: String,
     #[serde(rename = "mac-address")]
     pub mac_address: String,
-    pub radius: String,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub radius: bool,
     pub server: String,
     pub status: String,
     #[serde(rename = "active-address")]
@@ -72,7 +79,8 @@ pub struct Network {
     #[serde(rename = "dns-server")]
     pub dns_server: String,
     pub domain: Option<String>,
-    pub dynamic: String,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub dynamic: bool,
     pub gateway: String,
     pub netmask: String,
     #[serde(rename = "ntp-server")]

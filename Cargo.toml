@@ -4,6 +4,7 @@ version = "0.0.6"
 edition = "2021"
 description = "REST API Wrapper for Mikrotik API"
 license = "MIT"
+repository = "https://github.com/ishanjain28/mikrotik"
 
 [dev-dependencies]
 tokio-test = "0.4.2"

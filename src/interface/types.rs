@@ -7,7 +7,7 @@ pub struct Interface {
     #[serde(rename = ".id")]
     pub id: String,
     #[serde(rename = "actual-mtu")]
-    pub actual_mtu: String,
+    pub actual_mtu: Option<String>,
     pub comment: Option<String>,
     #[serde(rename = "default-name")]
     pub default_name: Option<String>,
@@ -29,7 +29,7 @@ pub struct Interface {
     pub mac_address: Option<String>,
     #[serde(rename = "max-l2mtu")]
     pub max_l2mtu: Option<String>,
-    pub mtu: String,
+    pub mtu: Option<String>,
     pub name: String,
     pub running: String,
     #[serde(rename = "rx-byte")]
