@@ -1,6 +1,5 @@
 use crate::serde_helpers::deserialize_bool;
-use serde_derive::Deserialize;
-use serde_derive::Serialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -87,4 +86,23 @@ pub struct Network {
     pub ntp_server: String,
     #[serde(rename = "wins-server")]
     pub wins_server: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Address {
+    #[serde(rename = ".id")]
+    pub id: String,
+    #[serde(rename = "actual-interface")]
+    pub actual_interface: String,
+    pub address: String,
+    pub comment: Option<String>,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub disabled: bool,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub dynamic: bool,
+    pub interface: String,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub invalid: bool,
+    pub network: String,
 }

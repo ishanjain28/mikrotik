@@ -3,6 +3,7 @@ use reqwest::{
     Method, Request, Url,
 };
 use serde::de::DeserializeOwned;
+use std::num::ParseFloatError;
 use thiserror::Error;
 
 pub struct Client {
@@ -67,4 +68,7 @@ pub enum ClientError {
 
     #[error(transparent)]
     ReqwestError(#[from] reqwest::Error),
+
+    #[error(transparent)]
+    ParseFloatError(#[from] ParseFloatError),
 }
