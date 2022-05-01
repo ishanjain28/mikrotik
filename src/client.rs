@@ -2,7 +2,7 @@ use reqwest::{
     header::{HeaderMap, HeaderValue},
     Method, Request, Url,
 };
-use serde::de::DeserializeOwned;
+use serde::{de::DeserializeOwned, ser::Serialize};
 use std::num::ParseFloatError;
 use thiserror::Error;
 
@@ -59,6 +59,56 @@ impl Client {
 
         Ok(response)
     }
+
+    pub async fn execute_post<P: Serialize, Q: DeserializeOwned>(
+        &mut self,
+        url: &str,
+        payload: P,
+    ) -> Result<Q, ClientError> {
+        let url = self.base_url.join(url)?;
+
+        // Serialize request body
+        let body = serde_json::to_string(&payload)?;
+        let body: reqwest::Body = body.into();
+
+        let mut req = Request::new(Method::POST, url);
+        self.add_credentials(req.headers_mut());
+        *req.body_mut() = Some(body);
+
+        // Add Content-Type Header
+        let mut headers = HeaderMap::new();
+        headers.insert("Content-Type", HeaderValue::from_static("application/json"));
+        *req.headers_mut() = headers;
+
+        let response = self.client.execute(req).await?.json::<Q>().await?;
+
+        Ok(response)
+    }
+
+    pub async fn execute_post_with_no_response<P: Serialize>(
+        &mut self,
+        url: &str,
+        payload: P,
+    ) -> Result<(), ClientError> {
+        let url = self.base_url.join(url)?;
+
+        // Serialize request body
+        let body = serde_json::to_string(&payload)?;
+        let body: reqwest::Body = body.into();
+
+        let mut req = Request::new(Method::POST, url);
+        self.add_credentials(req.headers_mut());
+        *req.body_mut() = Some(body);
+
+        // Add Content-Type Header
+        req.headers_mut()
+            .insert("Content-Type", HeaderValue::from_static("application/json"));
+
+        self.client.execute(req).await?;
+        // TODO(ishan): Check status code!!
+
+        Ok(())
+    }
 }
 
 #[derive(Debug, Error)]
@@ -71,4 +121,7 @@ pub enum ClientError {
 
     #[error(transparent)]
     ParseFloatError(#[from] ParseFloatError),
+
+    #[error(transparent)]
+    SerdeJsonError(#[from] serde_json::Error),
 }

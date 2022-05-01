@@ -106,3 +106,36 @@ pub struct Address {
     pub invalid: bool,
     pub network: String,
 }
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DhcpClient {
+    #[serde(rename = ".id")]
+    pub id: String,
+    #[serde(rename = "add-default-route")]
+    pub add_default_route: String,
+    pub address: String,
+    #[serde(rename = "dhcp-options")]
+    pub dhcp_options: String,
+    #[serde(rename = "dhcp-server")]
+    pub dhcp_server: String,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub disabled: bool,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub dynamic: bool,
+    #[serde(rename = "expires-after")]
+    pub expires_after: String,
+    pub gateway: String,
+    pub interface: String,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub invalid: bool,
+    #[serde(rename = "primary-dns")]
+    pub primary_dns: String,
+    #[serde(rename = "secondary-dns")]
+    pub secondary_dns: String,
+    pub status: String,
+    #[serde(rename = "use-peer-dns", deserialize_with = "deserialize_bool")]
+    pub use_peer_dns: bool,
+    #[serde(rename = "use-peer-ntp", deserialize_with = "deserialize_bool")]
+    pub use_peer_ntp: bool,
+}

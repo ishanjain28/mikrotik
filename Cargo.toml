@@ -14,5 +14,6 @@ tokio = { version = "1.17.0", features = ["macros"] }
 base64 = "0.13.0"
 reqwest = { version = "0.11.4", features = ["rustls-tls", "serde_json", "json"] }
 serde = { version = "1.0.130", features = ["derive"] }
+serde_json = "1.0.79"
 thiserror = "1.0.30"
 url = "2.2.2"

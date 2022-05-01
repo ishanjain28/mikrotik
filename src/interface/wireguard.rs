@@ -1,4 +1,5 @@
-use crate::{interface::types::WireguardInterface, Client, ClientError};
+pub use crate::interface::types::WireguardInterface;
+use crate::{Client, ClientError};
 
 /// list all wireguard interfaces
 pub async fn list(client: &mut Client) -> Result<Vec<WireguardInterface>, ClientError> {
