@@ -1,4 +1,4 @@
-use crate::serde_helpers::deserialize_bool;
+use crate::serde_helpers::{deserialize_bool, deserialize_u16};
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -138,4 +138,50 @@ pub struct DhcpClient {
     pub use_peer_dns: bool,
     #[serde(rename = "use-peer-ntp", deserialize_with = "deserialize_bool")]
     pub use_peer_ntp: bool,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Route {
+    #[serde(rename = ".id")]
+    pub id: String,
+    pub comment: Option<String>,
+    #[serde(default, deserialize_with = "deserialize_bool")]
+    pub disabled: bool,
+    pub distance: String,
+    #[serde(rename = "dst-address")]
+    pub dst_address: String,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub dynamic: bool,
+    #[serde(default, deserialize_with = "deserialize_bool")]
+    pub ecmp: bool,
+    pub gateway: String,
+    #[serde(rename = "hw-offloaded", deserialize_with = "deserialize_bool")]
+    pub hw_offloaded: bool,
+    #[serde(rename = "immediate-gw")]
+    pub immediate_gw: String,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub inactive: bool,
+    #[serde(rename = "pref-src")]
+    pub pref_src: Option<String>,
+    #[serde(rename = "routing-table")]
+    pub routing_table: String,
+    #[serde(deserialize_with = "deserialize_u16")]
+    pub scope: u16,
+    #[serde(default, rename = "static", deserialize_with = "deserialize_bool")]
+    pub static_field: bool,
+    #[serde(rename = "suppress-hw-offload", deserialize_with = "deserialize_bool")]
+    pub suppress_hw_offload: bool,
+    #[serde(
+        default,
+        rename = "target-scope",
+        deserialize_with = "deserialize_bool"
+    )]
+    pub target_scope: bool,
+    #[serde(default, deserialize_with = "deserialize_bool")]
+    pub active: bool,
+    #[serde(default, deserialize_with = "deserialize_bool")]
+    pub connect: bool,
+    #[serde(rename = "local-address")]
+    pub local_address: Option<String>,
 }

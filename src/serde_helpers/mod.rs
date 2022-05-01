@@ -52,6 +52,7 @@ where
     }
 }
 
+#[allow(unused)]
 pub fn maybe_deserialize_u64<'de, D>(deserializer: D) -> Result<Option<u64>, D::Error>
 where
     D: Deserializer<'de>,

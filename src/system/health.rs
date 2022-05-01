@@ -8,7 +8,7 @@ pub async fn health(client: &mut Client) -> Result<Vec<Health>, ClientError> {
     client.execute_get::<Vec<Health>>(&url).await
 }
 
-/// voltage can be used to get device's voltag reading
+/// voltage can be used to get device's voltage reading
 pub async fn voltage(client: &mut Client) -> Result<f32, ClientError> {
     let url = format!("{}/health/voltage", super::BASE);
 

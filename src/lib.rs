@@ -1,7 +1,9 @@
 mod client;
+mod serde_helpers;
+
 pub mod interface;
 pub mod ip;
-mod serde_helpers;
+pub mod routing;
 pub mod system;
 
 pub use client::*;

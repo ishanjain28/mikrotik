@@ -2,14 +2,14 @@ pub use crate::ip::types::DhcpClient;
 use crate::{Client, ClientError};
 use serde::{Deserialize, Serialize};
 
-/// list all DHCPv4 Clients
+/// List all DHCPv4 Clients
 pub async fn list(client: &mut Client) -> Result<Vec<DhcpClient>, ClientError> {
     let url = format!("{}/dhcp-client", super::BASE);
 
     client.execute_get::<Vec<DhcpClient>>(&url).await
 }
 
-/// get a specific DHCPv4 Client
+/// Get a specific DHCPv4 Client
 pub async fn get(client: &mut Client, id: &str) -> Result<DhcpClient, ClientError> {
     let url = format!("{}/dhcp-client/{}", super::BASE, id);
 
