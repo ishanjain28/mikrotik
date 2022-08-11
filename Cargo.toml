@@ -1,6 +1,6 @@
 [package]
 name = "mikrotik"
-version = "0.0.14"
+version = "0.0.15"
 edition = "2021"
 description = "REST API Wrapper for Mikrotik API"
 license = "MIT"
