@@ -185,3 +185,23 @@ pub struct Route {
     #[serde(rename = "local-address")]
     pub local_address: Option<String>,
 }
+
+#[derive(Default, Hash, Eq, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AddAddressInput {
+    pub address: String,
+    pub comment: Option<String>,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub disabled: bool,
+    pub interface: String,
+
+    // TODO(ishan): Do not serialize this if this was none
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub network: Option<String>,
+}
+
+#[derive(Default, Hash, Eq, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AddAddressOutput {
+    pub ret: String,
+}

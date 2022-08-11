@@ -19,6 +19,8 @@ pub enum InterfaceType {
     Wireguard,
     #[serde(rename = "pppoe-out")]
     PPPoE,
+    #[serde(rename = "6to4-tunnel")]
+    Tunnel6to4,
 }
 
 impl Default for InterfaceType {

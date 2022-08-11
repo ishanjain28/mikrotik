@@ -3,7 +3,7 @@ use reqwest::{
     Method, Request, Url,
 };
 use serde::{de::DeserializeOwned, ser::Serialize};
-use std::num::ParseFloatError;
+use std::{fmt::Display, num::ParseFloatError};
 use thiserror::Error;
 
 pub struct Client {
@@ -76,13 +76,14 @@ impl Client {
         *req.body_mut() = Some(body);
 
         // Add Content-Type Header
-        let mut headers = HeaderMap::new();
-        headers.insert("Content-Type", HeaderValue::from_static("application/json"));
-        *req.headers_mut() = headers;
+        req.headers_mut()
+            .insert("Content-Type", HeaderValue::from_static("application/json"));
 
-        let response = self.client.execute(req).await?.json::<Q>().await?;
-
-        Ok(response)
+        match self.client.execute(req).await {
+            Ok(v) if v.status().is_success() => Ok(v.json::<Q>().await?),
+            Ok(v) => Err(ClientError::MikrotikError(v.json::<MikrotikError>().await?)),
+            Err(e) => Err(e.into()),
+        }
     }
 
     pub async fn execute_post_with_no_response<P: Serialize>(
@@ -104,10 +105,11 @@ impl Client {
         req.headers_mut()
             .insert("Content-Type", HeaderValue::from_static("application/json"));
 
-        self.client.execute(req).await?;
-        // TODO(ishan): Check status code!!
-
-        Ok(())
+        match self.client.execute(req).await {
+            Ok(v) if v.status().is_success() => Ok(()),
+            Ok(v) => Err(ClientError::MikrotikError(v.json::<MikrotikError>().await?)),
+            Err(e) => Err(e.into()),
+        }
     }
 }
 
@@ -124,4 +126,23 @@ pub enum ClientError {
 
     #[error(transparent)]
     SerdeJsonError(#[from] serde_json::Error),
+
+    #[error(transparent)]
+    MikrotikError(#[from] MikrotikError),
+}
+
+use serde::{Deserialize as DeserializeDerive, Serialize as SerializeDerive};
+
+#[derive(Default, Error, Debug, Clone, PartialEq, SerializeDerive, DeserializeDerive)]
+#[serde(rename_all = "camelCase")]
+pub struct MikrotikError {
+    pub error: u16,
+    pub message: String,
+    pub detail: String,
+}
+
+impl Display for MikrotikError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.message)
+    }
 }
