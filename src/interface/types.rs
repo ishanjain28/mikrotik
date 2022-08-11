@@ -185,6 +185,8 @@ where
     }
 }
 
+// TODO(ishan): Make it easier for people to use this!
+// They should just able to specify it as a string and we can parse it
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct AllowedAddresses(pub Vec<IpNetwork>);
 

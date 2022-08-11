@@ -1,5 +1,6 @@
 pub use crate::interface::types::{
-    AddWireguardPeerInput, AddWireguardPeerOutput, WireguardInterface, WireguardPeer,
+    AddWireguardPeerInput, AddWireguardPeerOutput, AllowedAddresses, WireguardInterface,
+    WireguardPeer,
 };
 use crate::{Client, ClientError};
 use serde::{Deserialize, Serialize};
