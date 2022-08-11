@@ -1,10 +1,12 @@
 use crate::serde_helpers::{
     deserialize_bool, deserialize_u16, deserialize_u64, maybe_deserialize_u16,
 };
+use ipnetwork::IpNetwork;
 use serde::{
     de::{Error, Unexpected},
-    Deserialize, Deserializer, Serialize,
+    Deserialize, Deserializer, Serialize, Serializer,
 };
+use std::net::IpAddr;
 
 #[derive(Debug, Hash, Eq, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
@@ -142,4 +144,119 @@ pub struct WireguardInterface {
     pub public_key: String,
     #[serde(deserialize_with = "deserialize_bool")]
     pub running: bool,
+}
+
+pub fn de_ip_addr_vector<'de, D>(deserializer: D) -> Result<AllowedAddresses, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: &str = Deserialize::deserialize(deserializer)?;
+
+    let mut answer = vec![];
+
+    for addr in s.split(',') {
+        match addr.parse::<IpNetwork>() {
+            Ok(v) => answer.push(v),
+            Err(_) => {
+                return Err(Error::invalid_value(
+                    Unexpected::Str(s),
+                    &"an ip address with an optional mask",
+                ))
+            }
+        }
+    }
+
+    Ok(AllowedAddresses(answer))
+}
+
+pub fn maybe_ip_addr<'de, D>(deserializer: D) -> Result<Option<IpAddr>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: &str = Deserialize::deserialize(deserializer)?;
+
+    if s == "" {
+        return Ok(None);
+    }
+
+    match s.parse::<IpAddr>() {
+        Ok(v) => Ok(Some(v)),
+        Err(_) => Err(Error::invalid_value(Unexpected::Str(s), &"an ip address")),
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+pub struct AllowedAddresses(pub Vec<IpNetwork>);
+
+impl Serialize for AllowedAddresses {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let output: Vec<String> = self.0.iter().map(|c| c.to_string()).collect();
+
+        let output = output.join(",");
+
+        serializer.serialize_str(&output)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WireguardPeer {
+    #[serde(rename = ".id")]
+    pub id: String,
+    #[serde(rename = "allowed-address", deserialize_with = "de_ip_addr_vector")]
+    pub allowed_address: AllowedAddresses,
+    #[serde(
+        rename = "current-endpoint-address",
+        deserialize_with = "maybe_ip_addr"
+    )]
+    pub current_endpoint_address: Option<IpAddr>,
+    #[serde(rename = "current-endpoint-port", deserialize_with = "deserialize_u16")]
+    pub current_endpoint_port: u16,
+    #[serde(deserialize_with = "deserialize_bool")]
+    pub disabled: bool,
+    #[serde(rename = "endpoint-address", deserialize_with = "maybe_ip_addr")]
+    pub endpoint_address: Option<IpAddr>,
+    #[serde(rename = "endpoint-port", deserialize_with = "deserialize_u16")]
+    pub endpoint_port: u16,
+    pub interface: String,
+    #[serde(rename = "last-handshake")]
+    pub last_handshake: Option<String>,
+    #[serde(rename = "persistent-keepalive")]
+    pub persistent_keepalive: Option<String>,
+    #[serde(rename = "public-key")]
+    pub public_key: String,
+    #[serde(deserialize_with = "deserialize_u64")]
+    pub rx: u64,
+    #[serde(deserialize_with = "deserialize_u64")]
+    pub tx: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AddWireguardPeerInput {
+    #[serde(rename = "allowed-address")]
+    pub allowed_address: AllowedAddresses,
+    pub comment: Option<String>,
+    pub disabled: bool,
+    #[serde(rename = "endpoint-address")]
+    pub endpoint_address: Option<IpAddr>,
+    #[serde(rename = "endpoint-port")]
+    pub endpoint_port: u16,
+    pub interface: String,
+    #[serde(rename = "persistent-keepalive")]
+    /// Time in seconds
+    pub persistent_keepalive: Option<u64>,
+    #[serde(rename = "preshared-key")]
+    pub preshared_key: Option<String>,
+    #[serde(rename = "public-key")]
+    pub public_key: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AddWireguardPeerOutput {
+    pub ret: String,
 }
