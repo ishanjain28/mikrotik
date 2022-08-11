@@ -1,7 +1,7 @@
 use crate::serde_helpers::deserialize_bool;
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Hash, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Hash, Eq, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Rule {
     #[serde(rename = ".id")]

@@ -1,7 +1,7 @@
 use crate::serde_helpers::{deserialize_bool, deserialize_u16};
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Debug, Clone, Hash, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Eq, Clone, Hash, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DhcpServer {
     #[serde(rename = ".id")]
@@ -64,7 +64,7 @@ pub struct Lease {
     pub expires_after: Option<String>,
 }
 
-#[derive(Default, Hash, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Hash, Eq, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Network {
     #[serde(rename = ".id")]
@@ -88,7 +88,7 @@ pub struct Network {
     pub wins_server: String,
 }
 
-#[derive(Default, Hash, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Hash, Eq, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Address {
     #[serde(rename = ".id")]
@@ -107,7 +107,7 @@ pub struct Address {
     pub network: String,
 }
 
-#[derive(Default, Hash, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Hash, Eq, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DhcpClient {
     #[serde(rename = ".id")]
@@ -140,7 +140,7 @@ pub struct DhcpClient {
     pub use_peer_ntp: bool,
 }
 
-#[derive(Default, Hash, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Hash, Eq, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Route {
     #[serde(rename = ".id")]

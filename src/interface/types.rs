@@ -6,7 +6,7 @@ use serde::{
     Deserialize, Deserializer, Serialize,
 };
 
-#[derive(Debug, Hash, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Hash, Eq, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum InterfaceType {
     #[serde(rename = "vlan")]
@@ -27,7 +27,7 @@ impl Default for InterfaceType {
     }
 }
 
-#[derive(Debug, Hash, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Hash, Eq, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum Mtu {
     #[serde(rename = "auto")]
@@ -57,7 +57,7 @@ where
     }
 }
 
-#[derive(Default, Hash, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Hash, Eq, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Interface {
     #[serde(rename = ".id")]
@@ -121,7 +121,7 @@ pub struct Interface {
     pub last_link_down_time: Option<String>,
 }
 
-#[derive(Default, Hash, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Hash, Eq, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct WireguardInterface {
     #[serde(rename = ".id")]
